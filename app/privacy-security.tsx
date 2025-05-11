@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  Switch,
-  TouchableOpacity,
-  View,
-  Platform,
-} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useState } from "react";
+import {
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { APP_COLORS } from "../components/NeoBrutalismNavbar";
 
 const NEO_SHADOW = {

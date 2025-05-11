@@ -2,16 +2,16 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Image,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { ICON } from "../assets/placeholder-images";
 import NeoBrutalismNavbar from "../components/NeoBrutalismNavbar";
@@ -40,9 +40,9 @@ export default function Explore() {
       color: "#AAC4FF",
       courses: [
         { title: "Getting Started", icon: "calculator" },
-        { title: "Basic Algebra", icon: "superscript" },
+        { title: "Basic Algebra", icon: "square-root-alt" },
         { title: "Basic Solid Algebra", icon: "cube" },
-        { title: "Geometry", icon: "shapes" },
+        { title: "Geometry", icon: "draw-polygon" },
         { title: "Function", icon: "function" },
       ],
     },
@@ -54,7 +54,7 @@ export default function Explore() {
         { title: "Thinking in Code", icon: "brain" },
         { title: "Programming with Variables", icon: "code" },
         { title: "Programming with Python", icon: "python" },
-        { title: "Programming with Functions", icon: "laptop-code" },
+        { title: "Programming with Functions", icon: "code" },
         { title: "Computer Science Fundamentals", icon: "microchip" },
         { title: "How AI Works", icon: "robot" },
         { title: "Introduction to Neural Networks", icon: "network-wired" },
@@ -62,13 +62,12 @@ export default function Explore() {
     },
     {
       title: "Data Science",
-      subtitle: "Analyze data and probability concepts",
+      subtitle: "Master data analysis and machine learning",
       color: "#FFD6A5",
       courses: [
-        { title: "Exploring Data Visually", icon: "chart-bar" },
-        { title: "Introduction to Probability", icon: "dice" },
-        { title: "Predicting with Probability", icon: "chart-line" },
-        { title: "Regression and Classification", icon: "sort" },
+        { title: "Introduction to Data Science", icon: "chart-bar" },
+        { title: "Data Visualization", icon: "chart-line" },
+        { title: "Machine Learning Basics", icon: "brain" },
       ],
     },
     {
@@ -78,9 +77,9 @@ export default function Explore() {
       courses: [
         { title: "Scientific Thinking", icon: "microscope" },
         { title: "Physics", icon: "atom" },
-        { title: "Aerospace Engineering Basics", icon: "space-shuttle" },
-        { title: "Quantum Mechanics with Python", icon: "project-diagram" },
-        { title: "Quantum Computing", icon: "laptop" },
+        { title: "Aerospace Engineering Basics", icon: "rocket" },
+        { title: "Quantum Mechanics with Python", icon: "python" },
+        { title: "Quantum Computing", icon: "microchip" },
       ],
     },
     {
@@ -112,7 +111,7 @@ export default function Explore() {
       subtitle: "Deepen your mathematical knowledge",
       color: "#9BF6FF",
       courses: [
-        { title: "Calculus", icon: "integral" },
+        { title: "Calculus", icon: "infinity" },
         { title: "Linear Algebra", icon: "vector-square" },
       ],
     },
@@ -124,11 +123,44 @@ export default function Explore() {
 
 
     const coursePaths: { [key: string]: string } = {
-      "basic-algebra": "/courses/basic-algebra",
-      "programming-with-python": "/courses/python-programming",
-      "calculus": "/courses/calculus",
-      "programming-with-functions": "/courses/programming-functions",
-      /* ... */
+      "basic-algebra": "/courses/foundational-math/basic-algebra",
+      "basic-solid-algebra": "/courses/foundational-math/basic-solid-algebra",
+      "function": "/courses/foundational-math/function",
+      "geometry": "/courses/foundational-math/geometry",
+      
+      "thinking-in-code": "/courses/programming-cs/thinking-in-code",
+      "programming-with-variables": "/courses/programming-cs/programming-variables",
+      "programming-with-python": "/courses/programming-cs/python-programming",
+      "programming-with-functions": "/courses/programming-cs/programming-functions",
+      "computer-science-fundamentals": "/courses/programming-cs/computer-science-fundamentals",
+      "how-ai-works": "/courses/programming-cs/how-ai-works",
+      "introduction-to-neural-networks": "/courses/programming-cs/introduction-to-neural-networks",
+
+      "getting-started": "/courses/foundational-math/getting-started",
+      "calculus": "/courses/advanced-math/calculus",
+      "linear-algebra": "/courses/advanced-math/linear-algebra",
+      "introduction-to-data-science": "/courses/data-science/introduction-to-data-science",
+      "data-visualization": "/courses/data-science/data-visualization",
+      "machine-learning-basics": "/courses/data-science/machine-learning-basics",
+
+      // Science section
+      "scientific-thinking": "/courses/science/scientific-thinking",
+      "physics": "/courses/science/physics",
+      "aerospace-engineering-basics": "/courses/science/aerospace-engineering-basics",
+      "quantum-mechanics-with-python": "/courses/science/quantum-mechanics-with-python",
+      "quantum-computing": "/courses/science/quantum-computing",
+
+      // Logical Reasoning section
+      "logic": "/courses/logical-reasoning/logic",
+      "logic-ii": "/courses/logical-reasoning/logic-ii",
+      "everyday-tech": "/courses/logical-reasoning/everyday-tech",
+      "mathematical-thinking": "/courses/logical-reasoning/mathematical-thinking",
+
+      // Technology section
+      "digital-circuits": "/courses/technology/digital-circuits",
+      "web-technology-basics": "/courses/technology/web-technology-basics",
+      "search-engines": "/courses/technology/search-engines",
+      "cryptography": "/courses/technology/cryptography",
     };
 
     return coursePaths[kebabCase] || "/course";

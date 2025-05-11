@@ -2,18 +2,17 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
+    Dimensions,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
-import NeoBrutalismNavbar, { APP_COLORS } from "../../components/NeoBrutalismNavbar";
+import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
 
 const { width } = Dimensions.get("window");
 

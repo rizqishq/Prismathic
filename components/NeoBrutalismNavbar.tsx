@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Platform,
@@ -20,6 +20,7 @@ export const APP_COLORS = {
   CATEGORY_YELLOW: "#FDFFB6", // Yellow theme for categories
   CATEGORY_ORANGE: "#FFD6A5", // Orange theme for categories
   CATEGORY_TEAL: "#B1FFF5",  // Teal theme for categories
+  CATEGORY_PURPLE: "#BDB2FF", // Purple theme for categories
 };
 
 // Standardized neobrutalism shadow styling
@@ -42,6 +43,8 @@ export default function NeoBrutalismNavbar({
   variant = "home",
   style = {},
 }: NavbarProps) {
+  const router = useRouter();
+
   return (
     <View style={[styles.container, style]}>
       <View style={styles.navbar}>
@@ -55,13 +58,13 @@ export default function NeoBrutalismNavbar({
           ]}
           accessibilityRole="button"
           accessibilityLabel="Home"
-          onPress={() => variant !== "home" && router.replace("/home")}
+          onPress={() => variant !== "home" && router.push({ pathname: "/home" })}
         >
           <Ionicons
             name="home-outline"
             size={24}
             color={APP_COLORS.BLACK}
-            style={variant === "home" ? styles.navIcon : null}
+            style={variant === "home" ? styles.navIcon : undefined}
           />
           {variant === "home" ? <Text style={styles.navText}>Home</Text> : null}
         </TouchableOpacity>
@@ -77,14 +80,14 @@ export default function NeoBrutalismNavbar({
           accessibilityRole="button"
           accessibilityLabel="Explore"
           onPress={() =>
-            variant !== "explore" && router.replace("/explore")
+            variant !== "explore" && router.push({ pathname: "/explore" })
           }
         >
           <Ionicons
             name="globe-outline"
             size={24}
             color={APP_COLORS.BLACK}
-            style={variant === "explore" ? styles.navIcon : null}
+            style={variant === "explore" ? styles.navIcon : undefined}
           />
           {variant === "explore" ? (
             <Text style={styles.navText}>Explore</Text>
@@ -102,14 +105,14 @@ export default function NeoBrutalismNavbar({
           accessibilityRole="button"
           accessibilityLabel="Profile"
           onPress={() =>
-            variant !== "profile" && router.replace("/profile")
+            variant !== "profile" && router.push({ pathname: "/profile" })
           }
         >
           <Ionicons
             name="person-outline"
             size={24}
             color={APP_COLORS.BLACK}
-            style={variant === "profile" ? styles.navIcon : null}
+            style={variant === "profile" ? styles.navIcon : undefined}
           />
           {variant === "profile" ? (
             <Text style={styles.navText}>Profile</Text>

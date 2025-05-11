@@ -1,23 +1,20 @@
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
+    Dimensions,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import { COURSE_CALCULUS, ICON } from "../../assets/placeholder-images";
-import NeoBrutalismNavbar, { APP_COLORS } from "../../components/NeoBrutalismNavbar";
+import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
 
 const { width } = Dimensions.get("window");
-
 
 const NEO_SHADOW = {
   shadowColor: APP_COLORS.BLACK,
@@ -27,103 +24,95 @@ const NEO_SHADOW = {
   elevation: 5,
 };
 
-export default function CalculusCourse() {
-  const router = useRouter();
-  const [progress, setProgress] = useState(30);
+type CourseContent = {
+  title: string;
+  type: 'video' | 'reading' | 'exercise' | 'project';
+  duration: string;
+  description: string;
+  completed: boolean;
+};
 
+export default function BasicSolidAlgebra() {
+  const router = useRouter();
+  const [progress, setProgress] = useState(0);
 
   const courseInfo = {
-    title: "Calculus",
-    category: "Advanced Math",
+    title: "Basic Solid Algebra",
+    category: "Foundational Math",
     level: "Intermediate",
-    duration: "10 hours",
+    duration: "8 hours",
     students: "3,842",
     rating: 4.7,
-    icon: "integral",
+    icon: "cube",
     color: APP_COLORS.CATEGORY_BLUE,
-    description: "Master the fundamentals of calculus including limits, derivatives, and integrals. Learn how to solve real-world problems using calculus and understand the mathematical foundations of science and engineering."
+    description: "Dive deeper into algebraic concepts with a focus on solid geometry and spatial relationships. Learn to solve complex problems involving three-dimensional shapes and their algebraic representations."
   };
 
-  const courseContent = [
+  const courseContent: CourseContent[] = [
     {
-      title: "Introduction to Calculus",
+      title: "Introduction to Solid Geometry",
       type: "video",
-      duration: "12:45",
-      description: "Overview of calculus and its applications in science and engineering",
-      completed: true,
+      duration: "12:30",
+      description: "Understanding three-dimensional shapes and their properties",
+      completed: false,
     },
     {
-      title: "Limits and Continuity",
+      title: "Volume and Surface Area",
       type: "video",
-      duration: "15:20",
-      description: "Understanding limits, continuity, and their properties",
-      completed: true,
+      duration: "15:45",
+      description: "Calculating volumes and surface areas of basic 3D shapes",
+      completed: false,
     },
     {
-      title: "The Derivative",
+      title: "Algebraic Representation",
       type: "reading",
       duration: "20 min",
-      description: "Definition of derivatives and rules of differentiation",
-      completed: true,
-    },
-    {
-      title: "Applications of Derivatives",
-      type: "video",
-      duration: "18:30",
-      description: "Using derivatives for rates of change and optimization problems",
+      description: "Expressing geometric properties using algebraic equations",
       completed: false,
     },
     {
-      title: "Practice: Derivatives",
+      title: "Practice: Basic Calculations",
       type: "exercise",
       duration: "25 min",
-      description: "Hands-on exercises applying differentiation rules",
+      description: "Hands-on exercises with volume and surface area calculations",
       completed: false,
     },
     {
-      title: "The Definite Integral",
+      title: "Complex Shapes",
       type: "video",
-      duration: "16:40",
-      description: "Introduction to integration and the Fundamental Theorem of Calculus",
+      duration: "18:20",
+      description: "Working with composite and irregular 3D shapes",
       completed: false,
     },
     {
-      title: "Techniques of Integration",
+      title: "Spatial Relationships",
       type: "reading",
+      duration: "22 min",
+      description: "Understanding relationships between different 3D shapes",
+      completed: false,
+    },
+    {
+      title: "Practice: Complex Problems",
+      type: "exercise",
       duration: "30 min",
-      description: "Methods for evaluating integrals including substitution and parts",
+      description: "Solving real-world problems involving 3D shapes",
       completed: false,
     },
     {
-      title: "Applications of Integration",
-      type: "video",
-      duration: "22:15",
-      description: "Finding areas, volumes, and other applications of integrals",
-      completed: false,
-    },
-    {
-      title: "Final Project: Calculus in Real Life",
+      title: "Final Project",
       type: "project",
       duration: "45 min",
-      description: "Apply calculus concepts to solve a real-world problem",
+      description: "Design and analyze a complex 3D structure",
       completed: false,
-    },
+    }
   ];
 
-  const handleContentPress = (item: any) => {
-
-    if (item.title === "The Derivative") {
-      router.push({
-        pathname: "/course",
-        params: { type: "calculus", lesson: "derivative" }
-      });
-    } else {
-      console.log(`Opening lesson: ${item.title} (under development)`);
-    }
+  const handleContentPress = (item: CourseContent) => {
+    console.log(`Opening lesson: ${item.title} (under development)`);
   };
 
-  const renderContentItem = (item: any, index: number) => {
-    const isCompleted = progress > (index * 10);
+  const renderContentItem = (item: CourseContent, index: number) => {
+    const isCompleted = progress > (index * 12);
     
     return (
       <TouchableOpacity
@@ -167,13 +156,12 @@ export default function CalculusCourse() {
     );
   };
 
-  // Create a sample of what students will learn
   const learningPoints = [
-    "Master the concept of limits and continuity",
-    "Understand derivatives and their applications",
-    "Learn integration techniques and applications",
-    "Apply calculus to solve real-world problems",
-    "Prepare for advanced mathematics courses"
+    "Master 3D shape properties and measurements",
+    "Calculate volumes and surface areas accurately",
+    "Express geometric concepts algebraically",
+    "Solve complex spatial problems",
+    "Apply knowledge to real-world scenarios"
   ];
 
   return (
@@ -196,12 +184,12 @@ export default function CalculusCourse() {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {/* Course Banner with Icon instead of Image */}
+        {/* Course Banner */}
         <View style={[styles.bannerContainer, {backgroundColor: courseInfo.color}]}>
-          <FontAwesome5 name="square-root-alt" size={60} color="#000" style={styles.bannerIcon} />
+          <FontAwesome5 name="cube" size={60} color="#000" style={styles.bannerIcon} />
           <View style={styles.bannerContent}>
-            <Text style={styles.bannerTitle}>Advanced Mathematics</Text>
-            <Text style={styles.bannerSubtitle}>Master complex mathematical concepts</Text>
+            <Text style={styles.bannerTitle}>Foundational Mathematics</Text>
+            <Text style={styles.bannerSubtitle}>Master 3D geometry and algebra</Text>
           </View>
         </View>
 
@@ -249,45 +237,18 @@ export default function CalculusCourse() {
             <Text style={styles.progressPercentage}>{progress}%</Text>
           </View>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: courseInfo.color }]} />
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
           </View>
         </View>
 
         {/* Course Content */}
-        <View style={styles.contentContainer}>
+        <View style={styles.contentSection}>
           <Text style={styles.sectionTitle}>Course Content</Text>
-          <Text style={styles.contentSubtitle}>{courseContent.length} lessons • {courseInfo.duration} total</Text>
-          
           {courseContent.map((item, index) => renderContentItem(item, index))}
-          
-          {/* Call to Action */}
-          <TouchableOpacity 
-            style={[styles.ctaButton, {backgroundColor: courseInfo.color}]}
-            onPress={() => handleContentPress(courseContent[3])} // Navigate to next incomplete lesson
-          >
-            <Text style={styles.ctaButtonText}>Continue Learning</Text>
-          </TouchableOpacity>
         </View>
-
-        {/* Instructor */}
-        <View style={styles.instructorSection}>
-          <Text style={styles.sectionTitle}>Your Instructor</Text>
-          <View style={styles.instructorCard}>
-            <View style={styles.instructorImageContainer}>
-              <Image source={ICON} style={styles.instructorImage} />
-            </View>
-            <View style={styles.instructorInfo}>
-              <Text style={styles.instructorName}>Dr. Sarah Jenkins</Text>
-              <Text style={styles.instructorTitle}>Professor of Mathematics</Text>
-              <Text style={styles.instructorBio}>PhD in Applied Mathematics with 15+ years teaching experience. Specializes in calculus and differential equations.</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.spacer} />
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="explore" />
+      <NeoBrutalismNavbar variant="course" />
     </SafeAreaView>
   );
 }
@@ -298,75 +259,64 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: "#000",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
   backButton: {
-    marginBottom: 16,
+    marginRight: 16,
   },
   headerContent: {
-    alignItems: "center",
+    flex: 1,
   },
   courseTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    marginTop: 8,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   categoryText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#666",
-    marginTop: 4,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   scrollView: {
     flex: 1,
   },
   bannerContainer: {
+    padding: 20,
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    margin: 16,
-    marginTop: 0,
-    height: 140,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: APP_COLORS.BLACK,
-    marginBottom: 16,
-    ...NEO_SHADOW,
   },
   bannerIcon: {
-    marginRight: 16,
-    marginLeft: 8,
+    marginRight: 20,
   },
   bannerContent: {
     flex: 1,
   },
   bannerTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   bannerSubtitle: {
     fontSize: 16,
+    color: "#444",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-    color: APP_COLORS.BLACK,
   },
-  // Course Info Card
   courseInfoCard: {
-    padding: 16,
+    padding: 20,
     margin: 16,
-    marginTop: 0,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 2,
     borderColor: APP_COLORS.BLACK,
     ...NEO_SHADOW,
   },
   courseDescription: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 16,
+    lineHeight: 24,
     marginBottom: 16,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
@@ -378,58 +328,40 @@ const styles = StyleSheet.create({
   statItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: APP_COLORS.WHITE,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
     marginBottom: 8,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: APP_COLORS.BLACK,
   },
   statText: {
-    marginLeft: 6,
-    fontSize: 12,
+    marginLeft: 8,
+    fontSize: 14,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
-  // What You'll Learn Section
   learnSection: {
-    margin: 16,
-    marginTop: 0,
-    marginBottom: 16,
     padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: APP_COLORS.BLACK,
-    ...NEO_SHADOW,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   learnPoints: {
-    marginTop: 12,
+    marginTop: 8,
   },
   learnPoint: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     marginBottom: 12,
   },
   checkIcon: {
-    marginRight: 8,
-    marginTop: 2,
+    marginRight: 12,
   },
   learnPointText: {
-    flex: 1,
     fontSize: 14,
-    lineHeight: 20,
+    flex: 1,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   progressContainer: {
     padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "#000",
-    backgroundColor: "#fff",
-    ...NEO_SHADOW,
   },
   progressInfo: {
     flexDirection: "row",
@@ -438,93 +370,73 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   progressPercentage: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   progressBar: {
-    height: 12,
+    height: 8,
     backgroundColor: "#f0f0f0",
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: "#000",
+    borderRadius: 4,
+    overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    borderRadius: 4,
+    backgroundColor: APP_COLORS.CATEGORY_BLUE,
   },
-
-  contentContainer: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-  contentSubtitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 16,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  contentSection: {
+    padding: 16,
+    paddingBottom: 100,
   },
   contentItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
     padding: 16,
-    marginBottom: 12,
+    backgroundColor: "#fff",
     borderRadius: 8,
+    marginBottom: 12,
     borderWidth: 2,
-    borderColor: "#000",
-    shadowColor: "#000",
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 3,
+    borderColor: APP_COLORS.BLACK,
+    ...NEO_SHADOW,
   },
   completedItem: {
-    borderLeftWidth: 6,
-    borderLeftColor: "green",
+    backgroundColor: "#f8f8f8",
   },
   contentIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    justifyContent: "center",
+    marginRight: 16,
   },
   contentInfo: {
     flex: 1,
   },
   contentTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     marginBottom: 4,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   contentDescription: {
     fontSize: 14,
     color: "#666",
-    marginBottom: 4,
+    marginBottom: 8,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   contentMeta: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
   },
   contentDuration: {
     fontSize: 12,
     color: "#666",
+    marginRight: 12,
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
   completedText: {
@@ -532,70 +444,4 @@ const styles = StyleSheet.create({
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
   },
-
-  ctaButton: {
-    alignItems: "center",
-    padding: 16,
-    marginVertical: 20,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: APP_COLORS.BLACK,
-    ...NEO_SHADOW,
-  },
-  ctaButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-
-  instructorSection: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-  },
-  instructorCard: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: APP_COLORS.BLACK,
-    ...NEO_SHADOW,
-  },
-  instructorImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    overflow: "hidden",
-    marginRight: 16,
-    borderWidth: 2,
-    borderColor: APP_COLORS.BLACK,
-  },
-  instructorImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  instructorInfo: {
-    flex: 1,
-  },
-  instructorName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-  instructorTitle: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-  instructorBio: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
-  },
-  spacer: {
-    height: 100,
-  },
-});
+}); 
