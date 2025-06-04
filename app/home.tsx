@@ -90,7 +90,7 @@ export default function Home() {
   };
   
   const userData = {
-    name: "Paduka Rizqi",
+    name: "Prabu Rizqi",
     firstName: "Paduka",
     avatar: ICON,
   };

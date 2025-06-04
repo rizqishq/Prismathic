@@ -2,17 +2,19 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Dimensions,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
 
@@ -26,7 +28,7 @@ const NEO_SHADOW = {
 
 type CourseContent = {
   title: string;
-  type: 'video' | 'reading' | 'exercise' | 'project';
+  type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz';
   duration: string;
   description: string;
   completed: boolean;
@@ -35,6 +37,8 @@ type CourseContent = {
 export default function MachineLearningBasics() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [quizVisible, setQuizVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('course');
 
   const courseInfo = {
     title: "Machine Learning Basics",
@@ -44,7 +48,7 @@ export default function MachineLearningBasics() {
     students: "3,456",
     rating: 4.7,
     icon: "brain",
-    color: APP_COLORS.CATEGORY_BLUE,
+    color: APP_COLORS.CATEGORY_ORANGE,
     description: "Learn the fundamentals of machine learning. Understand key concepts, algorithms, and techniques used in modern machine learning applications. Build and train your first machine learning models."
   };
 
@@ -52,63 +56,149 @@ export default function MachineLearningBasics() {
     {
       title: "Introduction to Machine Learning",
       type: "video",
-      duration: "14:30",
-      description: "Understanding the basics of machine learning and its applications",
+      duration: "15:30",
+      description: "Understanding the basics of machine learning",
       completed: false,
     },
     {
-      title: "Supervised Learning",
+      title: "Types of Machine Learning",
       type: "video",
-      duration: "16:45",
-      description: "Learning about classification and regression algorithms",
+      duration: "18:45",
+      description: "Exploring supervised, unsupervised, and reinforcement learning",
+      completed: false,
+    },
+    {
+      title: "Data Preprocessing",
+      type: "reading",
+      duration: "25 min",
+      description: "Preparing data for machine learning models",
+      completed: false,
+    },
+    {
+      title: "Practice: Data Preparation",
+      type: "exercise",
+      duration: "30 min",
+      description: "Hands-on practice with data preprocessing",
+      completed: false,
+    },
+    {
+      title: "Basic Algorithms",
+      type: "video",
+      duration: "20:15",
+      description: "Understanding fundamental ML algorithms",
       completed: false,
     },
     {
       title: "Model Evaluation",
       type: "reading",
-      duration: "20 min",
-      description: "Understanding how to evaluate machine learning models",
-      completed: false,
-    },
-    {
-      title: "Practice: Building a Classifier",
-      type: "exercise",
-      duration: "25 min",
-      description: "Implementing a basic classification model",
-      completed: false,
-    },
-    {
-      title: "Unsupervised Learning",
-      type: "video",
-      duration: "15:20",
-      description: "Exploring clustering and dimensionality reduction",
-      completed: false,
-    },
-    {
-      title: "Feature Engineering",
-      type: "reading",
       duration: "22 min",
-      description: "Techniques for preparing and transforming data",
+      description: "Learning how to evaluate ML models",
       completed: false,
     },
     {
-      title: "Practice: Clustering Analysis",
+      title: "Practice: Model Building",
       type: "exercise",
-      duration: "30 min",
-      description: "Implementing clustering algorithms on real data",
+      duration: "35 min",
+      description: "Building and evaluating ML models",
+      completed: false,
+    },
+    {
+      title: "Quiz: ML Fundamentals",
+      type: "quiz",
+      duration: "25 min",
+      description: "Test your knowledge of machine learning concepts",
       completed: false,
     },
     {
       title: "Final Project",
       type: "project",
       duration: "45 min",
-      description: "Build and deploy a complete machine learning solution",
+      description: "Build a complete machine learning project",
       completed: false,
     }
   ];
 
+  // Quiz questions for machine learning concepts
+  const quizQuestions: Question[] = [
+    {
+      id: 1,
+      text: "What is the main difference between supervised and unsupervised learning?",
+      options: [
+        "Supervised learning uses more data",
+        "Supervised learning requires labeled data",
+        "Unsupervised learning is faster",
+        "Unsupervised learning is more accurate"
+      ],
+      correctAnswer: 1,
+    },
+    {
+      id: 2,
+      text: "Which of these is NOT a common step in data preprocessing?",
+      options: [
+        "Handling missing values",
+        "Feature scaling",
+        "Adding random noise",
+        "Encoding categorical variables"
+      ],
+      correctAnswer: 2,
+    },
+    {
+      id: 3,
+      text: "What is overfitting in machine learning?",
+      options: [
+        "When a model performs well on training data but poorly on new data",
+        "When a model takes too long to train",
+        "When a model uses too much memory",
+        "When a model has too many features"
+      ],
+      correctAnswer: 0,
+    },
+    {
+      id: 4,
+      text: "Which metric is commonly used for classification problems?",
+      options: [
+        "Mean Squared Error",
+        "R-squared",
+        "Accuracy",
+        "Root Mean Square Error"
+      ],
+      correctAnswer: 2,
+    },
+    {
+      id: 5,
+      text: "What is the purpose of cross-validation?",
+      options: [
+        "To make the model faster",
+        "To reduce the amount of data needed",
+        "To assess model performance on unseen data",
+        "To increase model complexity"
+      ],
+      correctAnswer: 2,
+    },
+  ];
+
+  const handleQuizComplete = (score: number, total: number) => {
+    // Update progress based on quiz performance
+    const quizProgress = Math.round((score / total) * 15);
+    setProgress(Math.min(100, progress + quizProgress));
+    
+    // Provide feedback based on score
+    const percentage = Math.round((score / total) * 100);
+    if (percentage >= 80) {
+      Alert.alert("Excellent!", `You scored ${score} out of ${total}! Your understanding of machine learning is outstanding!`);
+    } else if (percentage >= 60) {
+      Alert.alert("Good job!", `You scored ${score} out of ${total}. Keep learning and practicing ML concepts!`);
+    } else {
+      Alert.alert("Keep learning!", `You scored ${score} out of ${total}. Review the machine learning concepts and try again!`);
+    }
+  };
+
   const handleContentPress = (item: CourseContent) => {
-    console.log(`Opening lesson: ${item.title} (under development)`);
+    if (item.type === "quiz") {
+      setQuizVisible(true);
+    } else {
+      console.log(`Opening lesson: ${item.title} (under development)`);
+    }
   };
 
   const renderContentItem = (item: CourseContent, index: number) => {
@@ -129,9 +219,9 @@ export default function MachineLearningBasics() {
                 ? "book"
                 : item.type === "exercise"
                 ? "dumbbell"
-                : item.type === "project"
-                ? "project-diagram"
-                : "question-circle"
+                : item.type === "quiz"
+                ? "question-circle"
+                : "project-diagram"
             }
             size={20}
             color={isCompleted ? APP_COLORS.BLACK : "#555"}
@@ -237,7 +327,7 @@ export default function MachineLearningBasics() {
             <Text style={styles.progressPercentage}>{progress}%</Text>
           </View>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            <View style={[styles.progressFill, { backgroundColor: courseInfo.color }]} />
           </View>
         </View>
 
@@ -248,7 +338,14 @@ export default function MachineLearningBasics() {
         </View>
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
+      {quizVisible && (
+        <Quiz
+          questions={quizQuestions}
+          onComplete={handleQuizComplete}
+          onClose={() => setQuizVisible(false)}
+        />
+      )}
+
     </SafeAreaView>
   );
 }
@@ -386,7 +483,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: APP_COLORS.CATEGORY_BLUE,
+    backgroundColor: APP_COLORS.CATEGORY_ORANGE,
   },
   contentSection: {
     padding: 16,

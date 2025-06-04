@@ -71,8 +71,8 @@ export default function Profile() {
               <Ionicons name="person" size={40} color="#000" />
             </View>
             <View style={styles.userDetails}>
-              <Text style={styles.userName}>John Prismathic</Text>
-              <Text style={styles.userEmail}>john@prismathic.com</Text>
+              <Text style={styles.userName}>Prabu Rizqi</Text>
+              <Text style={styles.userEmail}>rzqishq@gmail.com</Text>
             </View>
           </View>
           <TouchableOpacity

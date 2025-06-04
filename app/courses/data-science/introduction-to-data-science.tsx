@@ -2,6 +2,7 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+    Alert,
     Dimensions,
     Platform,
     SafeAreaView,
@@ -13,6 +14,7 @@ import {
     View,
 } from "react-native";
 import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
 
@@ -26,7 +28,7 @@ const NEO_SHADOW = {
 
 type CourseContent = {
   title: string;
-  type: 'video' | 'reading' | 'exercise' | 'project';
+  type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz';
   duration: string;
   description: string;
   completed: boolean;
@@ -35,6 +37,8 @@ type CourseContent = {
 export default function IntroductionToDataScience() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [quizVisible, setQuizVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('course');
 
   const courseInfo = {
     title: "Introduction to Data Science",
@@ -44,7 +48,7 @@ export default function IntroductionToDataScience() {
     students: "4,567",
     rating: 4.7,
     icon: "chart-bar",
-    color: APP_COLORS.CATEGORY_BLUE,
+    color: APP_COLORS.CATEGORY_ORANGE,
     description: "Start your journey in data science. Learn about data analysis, visualization, and basic statistical concepts. Master the tools and techniques used by data scientists to extract insights from data."
   };
 
@@ -99,6 +103,13 @@ export default function IntroductionToDataScience() {
       completed: false,
     },
     {
+      title: "Quiz: Data Science Fundamentals",
+      type: "quiz",
+      duration: "25 min",
+      description: "Test your knowledge of data science concepts",
+      completed: false,
+    },
+    {
       title: "Final Project",
       type: "project",
       duration: "45 min",
@@ -107,8 +118,87 @@ export default function IntroductionToDataScience() {
     }
   ];
 
+  // Quiz questions for data science concepts
+  const quizQuestions: Question[] = [
+    {
+      id: 1,
+      text: "What is the primary goal of data science?",
+      options: [
+        "To create beautiful visualizations",
+        "To extract insights and knowledge from data",
+        "To store large amounts of data",
+        "To write complex algorithms"
+      ],
+      correctAnswer: 1,
+    },
+    {
+      id: 2,
+      text: "Which of the following is NOT a common data type in data science?",
+      options: [
+        "Numerical data",
+        "Categorical data",
+        "Textual data",
+        "Emotional data"
+      ],
+      correctAnswer: 3,
+    },
+    {
+      id: 3,
+      text: "What is the purpose of data cleaning?",
+      options: [
+        "To make data look prettier",
+        "To remove all data points",
+        "To handle missing values and inconsistencies",
+        "To increase data size"
+      ],
+      correctAnswer: 2,
+    },
+    {
+      id: 4,
+      text: "Which statistical measure represents the middle value of a dataset?",
+      options: [
+        "Mean",
+        "Median",
+        "Mode",
+        "Range"
+      ],
+      correctAnswer: 1,
+    },
+    {
+      id: 5,
+      text: "What is the main purpose of data visualization?",
+      options: [
+        "To make reports look professional",
+        "To communicate insights effectively",
+        "To store data permanently",
+        "To process data faster"
+      ],
+      correctAnswer: 1,
+    },
+  ];
+
+  const handleQuizComplete = (score: number, total: number) => {
+    // Update progress based on quiz performance
+    const quizProgress = Math.round((score / total) * 15);
+    setProgress(Math.min(100, progress + quizProgress));
+    
+    // Provide feedback based on score
+    const percentage = Math.round((score / total) * 100);
+    if (percentage >= 80) {
+      Alert.alert("Excellent!", `You scored ${score} out of ${total}! Your understanding of data science fundamentals is outstanding!`);
+    } else if (percentage >= 60) {
+      Alert.alert("Good job!", `You scored ${score} out of ${total}. Keep learning and practicing data science concepts!`);
+    } else {
+      Alert.alert("Keep learning!", `You scored ${score} out of ${total}. Review the data science concepts and try again!`);
+    }
+  };
+
   const handleContentPress = (item: CourseContent) => {
-    console.log(`Opening lesson: ${item.title} (under development)`);
+    if (item.type === "quiz") {
+      setQuizVisible(true);
+    } else {
+      console.log(`Opening lesson: ${item.title} (under development)`);
+    }
   };
 
   const renderContentItem = (item: CourseContent, index: number) => {
@@ -129,9 +219,9 @@ export default function IntroductionToDataScience() {
                 ? "book"
                 : item.type === "exercise"
                 ? "dumbbell"
-                : item.type === "project"
-                ? "project-diagram"
-                : "question-circle"
+                : item.type === "quiz"
+                ? "question-circle"
+                : "project-diagram"
             }
             size={20}
             color={isCompleted ? APP_COLORS.BLACK : "#555"}
@@ -237,18 +327,71 @@ export default function IntroductionToDataScience() {
             <Text style={styles.progressPercentage}>{progress}%</Text>
           </View>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+            <View style={[styles.progressFill, { backgroundColor: courseInfo.color }]} />
           </View>
         </View>
 
-        {/* Course Content */}
-        <View style={styles.contentSection}>
-          <Text style={styles.sectionTitle}>Course Content</Text>
-          {courseContent.map((item, index) => renderContentItem(item, index))}
+        {/* Bottom Tab Navigation (copied from thinking-in-code.tsx) */}
+        <View style={styles.bottomTabContainer}>
+          <TouchableOpacity
+            style={[styles.bottomTabButton, activeTab === 'course' && { backgroundColor: courseInfo.color, borderColor: APP_COLORS.BLACK }]}
+            onPress={() => setActiveTab('course')}
+          >
+            <FontAwesome5 name="book" size={18} color={activeTab === 'course' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.bottomTabText, activeTab === 'course' && styles.bottomActiveTabText]}>Course Content</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.bottomTabButton, activeTab === 'quiz' && { backgroundColor: courseInfo.color, borderColor: APP_COLORS.BLACK }]}
+            onPress={() => setActiveTab('quiz')}
+          >
+            <FontAwesome5 name="question-circle" size={18} color={activeTab === 'quiz' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.bottomTabText, activeTab === 'quiz' && styles.bottomActiveTabText]}>Quiz Section</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Course Content */}
+        {activeTab === 'course' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
+            {courseContent.map((item, index) => renderContentItem(item, index))}
+          </View>
+        )}
+        {activeTab === 'quiz' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Quiz Section</Text>
+            <View style={{backgroundColor: '#fff', borderRadius: 8, borderWidth: 2, borderColor: '#000', padding: 16, marginBottom: 16}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
+                <FontAwesome5 name="question-circle" size={24} color={APP_COLORS.BLACK} style={{marginRight: 8}} />
+                <Text style={{fontWeight: 'bold', fontSize: 16}}>Data Science Quiz</Text>
+              </View>
+              <Text style={{marginBottom: 8}}>
+                Test your understanding of data science through this comprehensive quiz. The quiz consists of 5 questions covering core concepts.
+              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
+                <FontAwesome5 name="clock" size={14} color="#666" style={{marginRight: 4}} />
+                <Text style={{marginRight: 16}}>15 minutes</Text>
+                <FontAwesome5 name="question-circle" size={14} color="#666" style={{marginRight: 4}} />
+                <Text>5 questions</Text>
+              </View>
+              <TouchableOpacity 
+                style={{backgroundColor: courseInfo.color, padding: 12, borderRadius: 8, alignItems: 'center', marginTop: 8, borderWidth: 2, borderColor: '#000'}}
+                onPress={() => setQuizVisible(true)}
+              >
+                <Text style={{fontWeight: 'bold', color: '#000'}}>Start Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
+      {quizVisible && (
+        <Quiz
+          questions={quizQuestions}
+          onComplete={handleQuizComplete}
+          onClose={() => setQuizVisible(false)}
+        />
+      )}
+
     </SafeAreaView>
   );
 }
@@ -386,7 +529,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: APP_COLORS.CATEGORY_BLUE,
+    backgroundColor: APP_COLORS.CATEGORY_ORANGE,
   },
   contentSection: {
     padding: 16,
@@ -443,5 +586,40 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  bottomTabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#fff',
+    borderTopWidth: 2,
+    borderColor: '#000',
+    borderRadius: 16,
+    margin: 16,
+    marginBottom: 24,
+    ...NEO_SHADOW,
+  },
+  bottomTabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    marginHorizontal: 8,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#ddd',
+  },
+  bottomTabText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#666',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    fontWeight: 'bold',
+  },
+  bottomActiveTabText: {
+    color: APP_COLORS.BLACK,
   },
 }); 

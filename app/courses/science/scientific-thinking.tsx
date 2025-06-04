@@ -32,6 +32,8 @@ type CourseContent = {
 export default function ScientificThinking() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [activeTab, setActiveTab] = useState('course');
+  const [quizVisible, setQuizVisible] = useState(false);
 
   const courseInfo = {
     title: "Scientific Thinking",
@@ -238,14 +240,65 @@ export default function ScientificThinking() {
           </View>
         </View>
 
-        {/* Course Content */}
-        <View style={styles.contentSection}>
-          <Text style={styles.sectionTitle}>Course Content</Text>
-          {courseContent.map((item, index) => renderContentItem(item, index))}
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'course' && { ...styles.activeTabButton, backgroundColor: courseInfo.color }]}
+            onPress={() => setActiveTab('course')}
+          >
+            <FontAwesome5 name="book" size={16} color={activeTab === 'course' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'course' && styles.activeTabText]}>Course Content</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'quiz' && { ...styles.activeTabButton, backgroundColor: courseInfo.color }]}
+            onPress={() => setActiveTab('quiz')}
+          >
+            <FontAwesome5 name="question-circle" size={16} color={activeTab === 'quiz' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'quiz' && styles.activeTabText]}>Quiz Section</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Course Content */}
+        {activeTab === 'course' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
+            {courseContent.map((item, index) => renderContentItem(item, index))}
+          </View>
+        )}
+
+        {/* Quiz Section */}
+        {activeTab === 'quiz' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Quiz Section</Text>
+            <View style={styles.quizCard}>
+              <View style={styles.quizHeader}>
+                <FontAwesome5 name="question-circle" size={24} color={APP_COLORS.BLACK} />
+                <Text style={styles.quizTitle}>Scientific Thinking Quiz</Text>
+              </View>
+              <Text style={styles.quizDescription}>
+                Test your understanding of scientific thinking concepts through this comprehensive quiz. The quiz consists of 5 questions covering basic scientific principles and problem-solving.
+              </Text>
+              <View style={styles.quizStats}>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="clock" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>15 minutes</Text>
+                </View>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="question-circle" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>5 questions</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.startQuizButton}
+                onPress={() => setQuizVisible(true)}
+              >
+                <Text style={styles.startQuizButtonText}>Start Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
     </SafeAreaView>
   );
 }
@@ -440,5 +493,97 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  activeTabButton: {
+    borderColor: APP_COLORS.BLACK,
+    borderWidth: 2,
+    ...NEO_SHADOW,
+  },
+  tabText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#666',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  activeTabText: {
+    color: APP_COLORS.BLACK,
+    fontWeight: 'bold',
+  },
+  quizCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderWidth: 2,
+    borderColor: APP_COLORS.BLACK,
+    ...NEO_SHADOW,
+  },
+  quizHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quizTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  quizDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 16,
+    lineHeight: 20,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  quizStats: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  quizStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  quizStatText: {
+    marginLeft: 6,
+    color: '#666',
+    fontSize: 14,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  startQuizButton: {
+    backgroundColor: APP_COLORS.CATEGORY_PINK,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: APP_COLORS.BLACK,
+    ...NEO_SHADOW,
+  },
+  startQuizButtonText: {
+    color: APP_COLORS.BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 

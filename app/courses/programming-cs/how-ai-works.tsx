@@ -1,18 +1,20 @@
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Dimensions,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
 
@@ -32,9 +34,13 @@ type CourseContent = {
   completed: boolean;
 };
 
+type TabType = 'course' | 'quiz';
+
 export default function HowAIWorks() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [quizVisible, setQuizVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('course');
 
   const courseInfo = {
     title: "How AI Works",
@@ -46,6 +52,81 @@ export default function HowAIWorks() {
     icon: "robot",
     color: APP_COLORS.CATEGORY_PINK,
     description: "Explore the fascinating world of Artificial Intelligence. Learn about machine learning, neural networks, and how AI systems make decisions. Understand the principles behind modern AI technologies."
+  };
+
+  // AI quiz questions
+  const aiQuizQuestions: Question[] = [
+    {
+      id: 1,
+      text: "What is the main difference between supervised and unsupervised learning?",
+      options: [
+        "Supervised learning requires more computational power", 
+        "Supervised learning uses labeled data, unsupervised learning doesn't", 
+        "Unsupervised learning is more accurate than supervised learning", 
+        "Supervised learning only works with numerical data"
+      ],
+      correctAnswer: 1, // Labeled data difference
+    },
+    {
+      id: 2,
+      text: "Which of the following is NOT a type of machine learning?",
+      options: [
+        "Supervised learning", 
+        "Reinforcement learning", 
+        "Programmed learning", 
+        "Unsupervised learning"
+      ],
+      correctAnswer: 2, // Programmed learning
+    },
+    {
+      id: 3,
+      text: "What is a neural network modeled after?",
+      options: [
+        "Computer circuits", 
+        "The human brain", 
+        "Mathematical formulas", 
+        "Logic gates"
+      ],
+      correctAnswer: 1, // The human brain
+    },
+    {
+      id: 4,
+      text: "What is the process of improving a machine learning model called?",
+      options: [
+        "Optimization", 
+        "Regularization", 
+        "Training", 
+        "Validation"
+      ],
+      correctAnswer: 2, // Training
+    },
+    {
+      id: 5,
+      text: "Which of these is an application of AI?",
+      options: [
+        "All of these options", 
+        "Image recognition", 
+        "Natural language processing", 
+        "Autonomous vehicles"
+      ],
+      correctAnswer: 0, // All of these options
+    },
+  ];
+  
+  const handleQuizComplete = (score: number, total: number) => {
+    // Update progress based on quiz performance
+    const quizProgress = Math.round((score / total) * 15); // Add up to 15% to progress
+    setProgress(Math.min(100, progress + quizProgress));
+    
+    // Provide feedback based on score
+    const percentage = Math.round((score / total) * 100);
+    if (percentage >= 80) {
+      Alert.alert("Amazing work!", `You scored ${score} out of ${total}! You've got a great understanding of AI concepts!`);
+    } else if (percentage >= 60) {
+      Alert.alert("Good job!", `You scored ${score} out of ${total}. Keep learning about AI technologies!`);
+    } else {
+      Alert.alert("Keep exploring!", `You scored ${score} out of ${total}. Review the AI concepts and try again!`);
+    }
   };
 
   const courseContent: CourseContent[] = [
@@ -104,11 +185,22 @@ export default function HowAIWorks() {
       duration: "45 min",
       description: "Build a simple AI model for image recognition",
       completed: false,
+    },
+    {
+      title: "AI Knowledge Quiz",
+      type: "exercise",
+      duration: "10 min",
+      description: "Test your understanding of AI concepts and technologies",
+      completed: false,
     }
   ];
 
   const handleContentPress = (item: CourseContent) => {
-    console.log(`Opening lesson: ${item.title} (under development)`);
+    if (item.title === "AI Knowledge Quiz") {
+      setQuizVisible(true);
+    } else {
+      console.log(`Opening lesson: ${item.title} (under development)`);
+    }
   };
 
   const renderContentItem = (item: CourseContent, index: number) => {
@@ -163,6 +255,21 @@ export default function HowAIWorks() {
     "Apply AI concepts to real-world problems",
     "Build and train simple AI models"
   ];
+
+  const QuizMenuBar = () => (
+    <View style={styles.quizMenuBar}>
+      <TouchableOpacity
+        style={[
+          styles.quizMenuButton,
+          { backgroundColor: courseInfo.color }
+        ]}
+        onPress={() => setQuizVisible(true)}
+      >
+        <FontAwesome5 name="question-circle" size={20} color="#fff" />
+        <Text style={styles.quizMenuText}>Take Quiz</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -241,19 +348,165 @@ export default function HowAIWorks() {
           </View>
         </View>
 
-        {/* Course Content */}
-        <View style={styles.contentSection}>
-          <Text style={styles.sectionTitle}>Course Content</Text>
-          {courseContent.map((item, index) => renderContentItem(item, index))}
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'course' && styles.activeTabButton]}
+            onPress={() => setActiveTab('course')}
+          >
+            <FontAwesome5 name="book" size={16} color={activeTab === 'course' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'course' && styles.activeTabText]}>Course Content</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'quiz' && styles.activeTabButton]}
+            onPress={() => setActiveTab('quiz')}
+          >
+            <FontAwesome5 name="question-circle" size={16} color={activeTab === 'quiz' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'quiz' && styles.activeTabText]}>Quiz Section</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Course Content */}
+        {activeTab === 'course' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
+            {courseContent.filter(item => item.title !== 'Knowledge Assessment Quiz').map((item, index) => renderContentItem(item, index))}
+          </View>
+        )}
+
+        {/* Quiz Section */}
+        {activeTab === 'quiz' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Quiz Section</Text>
+            <View style={styles.quizCard}>
+              <View style={styles.quizHeader}>
+                <FontAwesome5 name="question-circle" size={24} color={APP_COLORS.BLACK} />
+                <Text style={styles.quizTitle}>How AI Works Quiz</Text>
+              </View>
+              <Text style={styles.quizDescription}>
+                Test your understanding of artificial intelligence fundamentals through this comprehensive quiz. The quiz consists of 5 questions covering machine learning, neural networks, and AI decision-making processes.
+              </Text>
+              <View style={styles.quizStats}>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="clock" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>15 minutes</Text>
+                </View>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="question-circle" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>5 questions</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.startQuizButton}
+                onPress={() => setQuizVisible(true)}
+              >
+                <Text style={styles.startQuizButtonText}>Start Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        <View style={styles.spacer} />
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
+      {/* Quiz Modal */}
+      <Quiz 
+        title="AI Concepts & Technology Quiz"
+        questions={aiQuizQuestions}
+        onComplete={handleQuizComplete}
+        themeColor={courseInfo.color}
+        onClose={() => setQuizVisible(false)}
+        visible={quizVisible}
+      />
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  spacer: {
+    height: 40,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    ...NEO_SHADOW,
+  },
+  activeTabButton: {
+    backgroundColor: APP_COLORS.CATEGORY_PINK,
+  },
+  tabText: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+  },
+  activeTabText: {
+    color: APP_COLORS.BLACK,
+  },
+  quizCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    ...NEO_SHADOW,
+  },
+  quizHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quizTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 12,
+  },
+  quizDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  quizStats: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  quizStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  quizStatText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 6,
+  },
+  startQuizButton: {
+    backgroundColor: APP_COLORS.CATEGORY_PINK,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    ...NEO_SHADOW,
+  },
+  startQuizButtonText: {
+    color: APP_COLORS.BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -443,5 +696,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  quizMenuBar: {
+    padding: 10,
+    backgroundColor: '#fff',
+    ...NEO_SHADOW,
+    marginBottom: 10,
+  },
+  quizMenuButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  quizMenuText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 

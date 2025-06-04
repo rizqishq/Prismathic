@@ -26,10 +26,10 @@ const NEO_SHADOW = {
 };
 
 export default function EditProfile() {
-  const [name, setName] = useState("John Prismathic");
-  const [email, setEmail] = useState("john@prismathic.com");
-  const [bio, setBio] = useState("Math enthusiast and lifelong learner");
-  const [phone, setPhone] = useState("+1 234 567 890");
+  const [name, setName] = useState("Prabu Rizqi");
+  const [email, setEmail] = useState("rzqishq@gmail.com");
+  const [bio, setBio] = useState("Cursor and Windsurf enjoyer");
+  const [phone, setPhone] = useState("+62 1234567890");
   
   const goBack = () => {
     router.back();

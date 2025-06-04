@@ -82,39 +82,6 @@ export default function Explore() {
         { title: "Quantum Computing", icon: "microchip" },
       ],
     },
-    {
-      title: "Logical Reasoning",
-      subtitle: "Enhance your thinking skills",
-      color: "#A0C4FF",
-      courses: [
-        { title: "Logic", icon: "chess" },
-        { title: "Logic II", icon: "chess-knight" },
-        { title: "Everyday Tech", icon: "mobile-alt" },
-        { title: "Mathematical Thinking", icon: "square-root-alt" },
-      ],
-    },
-    {
-      title: "Technology",
-      subtitle: "Discover technology at the edge",
-      color: "#BDB2FF",
-      courses: [
-        { title: "How AI Works", icon: "robot" },
-        { title: "Digital Circuits", icon: "microchip" },
-        { title: "Web Technology Basics", icon: "globe" },
-        { title: "Search Engines", icon: "search" },
-        { title: "Cryptography", icon: "lock" },
-        { title: "Quantum Computing", icon: "laptop" },
-      ],
-    },
-    {
-      title: "Advanced Math",
-      subtitle: "Deepen your mathematical knowledge",
-      color: "#9BF6FF",
-      courses: [
-        { title: "Calculus", icon: "infinity" },
-        { title: "Linear Algebra", icon: "vector-square" },
-      ],
-    },
   ];
 
   const getCoursePath = (courseTitle: string) => {

@@ -24,7 +24,7 @@ export const APP_COLORS = {
 };
 
 // Standardized neobrutalism shadow styling
-const NEO_SHADOW = {
+export const NEO_SHADOW = {
   shadowColor: APP_COLORS.BLACK,
   shadowOffset: { width: 4, height: 4 },
   shadowOpacity: 1,

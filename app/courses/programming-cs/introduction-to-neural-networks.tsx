@@ -1,7 +1,8 @@
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
+    Alert,
     Dimensions,
     Platform,
     SafeAreaView,
@@ -10,9 +11,10 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
 
@@ -32,9 +34,13 @@ type CourseContent = {
   completed: boolean;
 };
 
+type TabType = 'course' | 'quiz';
+
 export default function IntroductionToNeuralNetworks() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [quizVisible, setQuizVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('course');
 
   const courseInfo = {
     title: "Introduction to Neural Networks",
@@ -46,6 +52,81 @@ export default function IntroductionToNeuralNetworks() {
     icon: "network-wired",
     color: APP_COLORS.CATEGORY_PINK,
     description: "Dive deep into the world of neural networks. Learn about their architecture, how they work, and how to implement them. Understand the mathematics behind neural networks and their applications in modern AI."
+  };
+
+  // Neural Networks quiz questions
+  const neuralNetworksQuizQuestions: Question[] = [
+    {
+      id: 1,
+      text: "What is an artificial neural network inspired by?",
+      options: [
+        "Computer circuits", 
+        "Biological neural networks in the human brain", 
+        "Electronic relay systems", 
+        "Quantum computing"
+      ],
+      correctAnswer: 1, // Biological neural networks
+    },
+    {
+      id: 2,
+      text: "Which of the following is NOT a common activation function in neural networks?",
+      options: [
+        "ReLU (Rectified Linear Unit)", 
+        "Sigmoid", 
+        "Tangent", 
+        "Tanh (Hyperbolic Tangent)"
+      ],
+      correctAnswer: 2, // Tangent (it's usually Tanh, not just Tangent)
+    },
+    {
+      id: 3,
+      text: "What is the process called when a neural network adjusts weights based on error?",
+      options: [
+        "Forward propagation", 
+        "Backpropagation", 
+        "Weight normalization", 
+        "Gradient ascent"
+      ],
+      correctAnswer: 1, // Backpropagation
+    },
+    {
+      id: 4,
+      text: "In a neural network, what does a node in the hidden layer do?",
+      options: [
+        "Simply pass input data to the output layer", 
+        "Store the final result of computation", 
+        "Process inputs with weights and activation functions", 
+        "Only store binary values (0 or 1)"
+      ],
+      correctAnswer: 2, // Process inputs with weights and activation functions
+    },
+    {
+      id: 5,
+      text: "What problem might occur if your neural network has too many layers and neurons?",
+      options: [
+        "Overfitting", 
+        "Underfitting", 
+        "Gradient explosion", 
+        "All of the above"
+      ],
+      correctAnswer: 0, // Overfitting
+    },
+  ];
+  
+  const handleQuizComplete = (score: number, total: number) => {
+    // Update progress based on quiz performance
+    const quizProgress = Math.round((score / total) * 15); // Add up to 15% to progress
+    setProgress(Math.min(100, progress + quizProgress));
+    
+    // Provide feedback based on score
+    const percentage = Math.round((score / total) * 100);
+    if (percentage >= 80) {
+      Alert.alert("Excellent!", `You scored ${score} out of ${total}! You're grasping neural network concepts very well!`);
+    } else if (percentage >= 60) {
+      Alert.alert("Good progress!", `You scored ${score} out of ${total}. Keep studying neural networks fundamentals!`);
+    } else {
+      Alert.alert("Keep learning!", `You scored ${score} out of ${total}. Neural networks can be complex, so review the material and try again!`);
+    }
   };
 
   const courseContent: CourseContent[] = [
@@ -104,11 +185,22 @@ export default function IntroductionToNeuralNetworks() {
       duration: "45 min",
       description: "Build and train a neural network for pattern recognition",
       completed: false,
+    },
+    {
+      title: "Neural Networks Quiz",
+      type: "exercise",
+      duration: "10 min",
+      description: "Test your understanding of neural network concepts",
+      completed: false,
     }
   ];
 
   const handleContentPress = (item: CourseContent) => {
-    console.log(`Opening lesson: ${item.title} (under development)`);
+    if (item.title === "Neural Networks Quiz") {
+      setQuizVisible(true);
+    } else {
+      console.log(`Opening lesson: ${item.title} (under development)`);
+    }
   };
 
   const renderContentItem = (item: CourseContent, index: number) => {
@@ -163,6 +255,21 @@ export default function IntroductionToNeuralNetworks() {
     "Implement and train basic neural networks",
     "Apply neural networks to solve real-world problems"
   ];
+
+  const QuizMenuBar = () => (
+    <View style={styles.quizMenuBar}>
+      <TouchableOpacity
+        style={[
+          styles.quizMenuButton,
+          { backgroundColor: courseInfo.color }
+        ]}
+        onPress={() => setQuizVisible(true)}
+      >
+        <FontAwesome5 name="question-circle" size={20} color="#fff" />
+        <Text style={styles.quizMenuText}>Take Quiz</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -241,19 +348,165 @@ export default function IntroductionToNeuralNetworks() {
           </View>
         </View>
 
-        {/* Course Content */}
-        <View style={styles.contentSection}>
-          <Text style={styles.sectionTitle}>Course Content</Text>
-          {courseContent.map((item, index) => renderContentItem(item, index))}
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'course' && styles.activeTabButton]}
+            onPress={() => setActiveTab('course')}
+          >
+            <FontAwesome5 name="book" size={16} color={activeTab === 'course' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'course' && styles.activeTabText]}>Course Content</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tabButton, activeTab === 'quiz' && styles.activeTabButton]}
+            onPress={() => setActiveTab('quiz')}
+          >
+            <FontAwesome5 name="question-circle" size={16} color={activeTab === 'quiz' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'quiz' && styles.activeTabText]}>Quiz Section</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Course Content */}
+        {activeTab === 'course' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
+            {courseContent.filter(item => item.title !== 'Neural Networks Quiz').map((item, index) => renderContentItem(item, index))}
+          </View>
+        )}
+
+        {/* Quiz Section */}
+        {activeTab === 'quiz' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Quiz Section</Text>
+            <View style={styles.quizCard}>
+              <View style={styles.quizHeader}>
+                <FontAwesome5 name="question-circle" size={24} color={APP_COLORS.BLACK} />
+                <Text style={styles.quizTitle}>Neural Networks Quiz</Text>
+              </View>
+              <Text style={styles.quizDescription}>
+                Test your understanding of neural networks through this comprehensive quiz. The quiz consists of 5 questions covering neural network architecture, activation functions, backpropagation, and more.
+              </Text>
+              <View style={styles.quizStats}>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="clock" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>15 minutes</Text>
+                </View>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="question-circle" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>5 questions</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.startQuizButton}
+                onPress={() => setQuizVisible(true)}
+              >
+                <Text style={styles.startQuizButtonText}>Start Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        <View style={styles.spacer} />
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
+      {/* Quiz Modal */}
+      <Quiz 
+        title="Neural Networks Assessment"
+        questions={neuralNetworksQuizQuestions}
+        onComplete={handleQuizComplete}
+        themeColor={courseInfo.color}
+        onClose={() => setQuizVisible(false)}
+        visible={quizVisible}
+      />
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  spacer: {
+    height: 40,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    ...NEO_SHADOW,
+  },
+  activeTabButton: {
+    backgroundColor: APP_COLORS.CATEGORY_PINK,
+  },
+  tabText: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+  },
+  activeTabText: {
+    color: APP_COLORS.BLACK,
+  },
+  quizCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    ...NEO_SHADOW,
+  },
+  quizHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  quizTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 12,
+  },
+  quizDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  quizStats: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  quizStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  quizStatText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 6,
+  },
+  startQuizButton: {
+    backgroundColor: APP_COLORS.CATEGORY_PINK,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    ...NEO_SHADOW,
+  },
+  startQuizButtonText: {
+    color: APP_COLORS.BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -443,5 +696,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  quizMenuBar: {
+    padding: 10,
+    backgroundColor: '#fff',
+    ...NEO_SHADOW,
+    marginBottom: 10,
+  },
+  quizMenuButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  quizMenuText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 

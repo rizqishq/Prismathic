@@ -2,17 +2,19 @@ import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Dimensions,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Dimensions,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
 
@@ -26,7 +28,7 @@ const NEO_SHADOW = {
 
 type CourseContent = {
   title: string;
-  type: 'video' | 'reading' | 'exercise' | 'project';
+  type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz';
   duration: string;
   description: string;
   completed: boolean;
@@ -35,6 +37,8 @@ type CourseContent = {
 export default function Geometry() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [quizVisible, setQuizVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('course');
 
   const courseInfo = {
     title: "Geometry",
@@ -99,6 +103,13 @@ export default function Geometry() {
       completed: false,
     },
     {
+      title: "Quiz: Geometry Fundamentals",
+      type: "quiz",
+      duration: "25 min",
+      description: "Test your knowledge of geometric concepts and properties",
+      completed: false,
+    },
+    {
       title: "Final Project",
       type: "project",
       duration: "40 min",
@@ -107,8 +118,62 @@ export default function Geometry() {
     }
   ];
 
+  // Quiz questions for geometry fundamentals
+  const quizQuestions: Question[] = [
+    {
+      id: 1,
+      text: "What is the area of a square with sides of length 7 cm?",
+      options: ["14 cm²", "28 cm²", "49 cm²", "64 cm²"],
+      correctAnswer: 2, // 49 cm²
+    },
+    {
+      id: 2,
+      text: "How many degrees are in a right angle?",
+      options: ["45°", "90°", "180°", "360°"],
+      correctAnswer: 1, // 90°
+    },
+    {
+      id: 3,
+      text: "What is the formula for the area of a circle?",
+      options: ["πr", "2πr", "πr²", "πd"],
+      correctAnswer: 2, // πr²
+    },
+    {
+      id: 4,
+      text: "If a triangle has angles of 30° and 60°, what is the measure of the third angle?",
+      options: ["30°", "60°", "90°", "120°"],
+      correctAnswer: 2, // 90°
+    },
+    {
+      id: 5,
+      text: "What is the perimeter of a rectangle with length 8 cm and width 5 cm?",
+      options: ["13 cm", "20 cm", "26 cm", "40 cm"],
+      correctAnswer: 2, // 26 cm
+    },
+  ];
+
+  const handleQuizComplete = (score: number, total: number) => {
+    // Update progress based on quiz performance
+    const quizProgress = Math.round((score / total) * 15);
+    setProgress(Math.min(100, progress + quizProgress));
+    
+    // Provide feedback based on score
+    const percentage = Math.round((score / total) * 100);
+    if (percentage >= 80) {
+      Alert.alert("Excellent work!", `You scored ${score} out of ${total}! Your understanding of geometric concepts is strong!`);
+    } else if (percentage >= 60) {
+      Alert.alert("Good job!", `You scored ${score} out of ${total}. Keep working on those geometry skills!`);
+    } else {
+      Alert.alert("Keep practicing!", `You scored ${score} out of ${total}. Review the geometry concepts and try again!`);
+    }
+  };
+
   const handleContentPress = (item: CourseContent) => {
-    console.log(`Opening lesson: ${item.title} (under development)`);
+    if (item.type === "quiz") {
+      setQuizVisible(true);
+    } else {
+      console.log(`Opening lesson: ${item.title} (under development)`);
+    }
   };
 
   const renderContentItem = (item: CourseContent, index: number) => {
@@ -129,6 +194,8 @@ export default function Geometry() {
                 ? "book"
                 : item.type === "exercise"
                 ? "dumbbell"
+                : item.type === "quiz"
+                ? "question-circle"
                 : item.type === "project"
                 ? "project-diagram"
                 : "question-circle"
@@ -188,8 +255,8 @@ export default function Geometry() {
         <View style={[styles.bannerContainer, {backgroundColor: courseInfo.color}]}>
           <FontAwesome5 name="draw-polygon" size={60} color="#000" style={styles.bannerIcon} />
           <View style={styles.bannerContent}>
-            <Text style={styles.bannerTitle}>Foundational Mathematics</Text>
-            <Text style={styles.bannerSubtitle}>Master geometric concepts</Text>
+            <Text style={styles.bannerTitle}>Foundational Math</Text>
+            <Text style={styles.bannerSubtitle}>Master geometry concepts</Text>
           </View>
         </View>
 
@@ -241,14 +308,75 @@ export default function Geometry() {
           </View>
         </View>
 
-        {/* Course Content */}
-        <View style={styles.contentSection}>
-          <Text style={styles.sectionTitle}>Course Content</Text>
-          {courseContent.map((item, index) => renderContentItem(item, index))}
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'course' && { ...styles.activeTabButton, backgroundColor: courseInfo.color }]}
+            onPress={() => setActiveTab('course')}
+          >
+            <FontAwesome5 name="book" size={16} color={activeTab === 'course' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'course' && styles.activeTabText]}>Course Content</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'quiz' && { ...styles.activeTabButton, backgroundColor: courseInfo.color }]}
+            onPress={() => setActiveTab('quiz')}
+          >
+            <FontAwesome5 name="question-circle" size={16} color={activeTab === 'quiz' ? APP_COLORS.BLACK : '#666'} />
+            <Text style={[styles.tabText, activeTab === 'quiz' && styles.activeTabText]}>Quiz Section</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Course Content */}
+        {activeTab === 'course' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
+            {courseContent.filter(item => item.title !== 'Course Assessment').map((item, index) => renderContentItem(item, index))}
+          </View>
+        )}
+
+        {/* Quiz Section */}
+        {activeTab === 'quiz' && (
+          <View style={styles.contentSection}>
+            <Text style={styles.sectionTitle}>Quiz Section</Text>
+            <View style={styles.quizCard}>
+              <View style={styles.quizHeader}>
+                <FontAwesome5 name="question-circle" size={24} color={APP_COLORS.BLACK} />
+                <Text style={styles.quizTitle}>Geometry Quiz</Text>
+              </View>
+              <Text style={styles.quizDescription}>
+                Test your understanding of geometry through this comprehensive quiz. The quiz consists of 5 questions covering shapes, angles, and geometric concepts.
+              </Text>
+              <View style={styles.quizStats}>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="clock" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>15 minutes</Text>
+                </View>
+                <View style={styles.quizStatItem}>
+                  <FontAwesome5 name="question-circle" size={14} color="#666" />
+                  <Text style={styles.quizStatText}>5 questions</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.startQuizButton}
+                onPress={() => setQuizVisible(true)}
+              >
+                <Text style={styles.startQuizButtonText}>Start Quiz</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
 
-      <NeoBrutalismNavbar variant="course" />
+      {/* Quiz Modal */}
+      <Quiz 
+        title="Geometry Quiz"
+        questions={quizQuestions}
+        onComplete={handleQuizComplete}
+        themeColor={courseInfo.color}
+        onClose={() => setQuizVisible(false)}
+        visible={quizVisible}
+      />
+
     </SafeAreaView>
   );
 }
@@ -443,5 +571,85 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "green",
     fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  tabButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  activeTabButton: {
+    borderColor: APP_COLORS.BLACK,
+    borderWidth: 2,
+    ...NEO_SHADOW,
+  },
+  tabText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#666',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  activeTabText: {
+    color: APP_COLORS.BLACK,
+    fontWeight: 'bold',
+  },
+  quizCard: {
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: APP_COLORS.BLACK,
+    ...NEO_SHADOW,
+  },
+  quizHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  quizTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  quizDescription: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 16,
+  },
+  quizStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  quizStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quizStatText: {
+    marginLeft: 8,
+  },
+  startQuizButton: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: APP_COLORS.CATEGORY_BLUE,
+    alignItems: 'center',
+  },
+  startQuizButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 

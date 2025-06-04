@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
+import NeoBrutalismNavbar, { APP_COLORS } from "../../../components/NeoBrutalismNavbar";
 import Quiz, { Question } from "../../../components/Quiz";
 
 const { width } = Dimensions.get("window");
@@ -35,79 +35,79 @@ type CourseItem = {
   isQuiz?: boolean;
 };
 
-export default function BasicAlgebra() {
+export default function ComputerScienceFundamentals() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [quizVisible, setQuizVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('course');
 
   const courseInfo = {
-    title: "Basic Algebra",
-    category: "Foundational Math",
+    title: "Computer Science Fundamentals",
+    category: "Programming & CS",
     level: "Beginner",
-    duration: "8 hours",
-    students: "3,856",
-    rating: 4.7,
-    icon: "square-root-alt",
-    color: APP_COLORS.CATEGORY_YELLOW,
-    description: "Master the fundamentals of algebra including variables, equations, functions, and mathematical problem-solving. Build a strong foundation for advanced mathematics."
+    duration: "10 hours",
+    students: "5,234",
+    rating: 4.8,
+    icon: "microchip",
+    color: APP_COLORS.CATEGORY_BLUE,
+    description: "Master the core concepts of computer science including algorithms, data structures, computer architecture, and computational thinking. Build a strong foundation for your programming journey."
   };
 
   const quizQuestions: Question[] = [
     {
       id: 1,
-      text: "What is a variable in algebra?",
+      text: "What is an algorithm?",
       options: [
-        "A fixed number",
-        "A letter or symbol representing an unknown value",
-        "A mathematical operation",
-        "A geometric shape"
+        "A programming language",
+        "A step-by-step procedure to solve a problem",
+        "A type of computer",
+        "A mathematical equation"
       ],
       correctAnswer: 1
     },
     {
       id: 2,
-      text: "Which of these is a linear equation?",
+      text: "Which of these is NOT a basic data structure?",
       options: [
-        "y = x²",
-        "y = 2x + 3",
-        "y = 1/x",
-        "y = √x"
+        "Array",
+        "LinkedList",
+        "Database",
+        "Stack"
       ],
-      correctAnswer: 1
+      correctAnswer: 2
     },
     {
       id: 3,
-      text: "What does the slope of a line represent?",
+      text: "What is the primary function of RAM in a computer?",
       options: [
-        "The y-intercept",
-        "The starting point",
-        "The rate of change",
-        "The endpoint"
+        "Long-term storage",
+        "Processing data",
+        "Temporary data storage during execution",
+        "Cooling the CPU"
       ],
       correctAnswer: 2
     },
     {
       id: 4,
-      text: "How do you solve for x in 2x + 5 = 13?",
+      text: "What is binary code?",
       options: [
-        "x = 4",
-        "x = 6",
-        "x = 8",
-        "x = 9"
+        "A programming language",
+        "A number system using only 0s and 1s",
+        "A type of computer virus",
+        "A networking protocol"
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     },
     {
       id: 5,
-      text: "What is the quadratic formula?",
+      text: "What is the time complexity of a linear search algorithm?",
       options: [
-        "x = -b ± √(b² - 4ac)/2a",
-        "x = a + b",
-        "x = -b/a",
-        "x = c/a"
+        "O(1)",
+        "O(n)",
+        "O(n²)",
+        "O(log n)"
       ],
-      correctAnswer: 0
+      correctAnswer: 1
     }
   ];
 
@@ -123,47 +123,47 @@ export default function BasicAlgebra() {
 
   const courseContent: CourseItem[] = [
     {
-      title: "Introduction to Algebra",
+      title: "Introduction to Computer Science",
       duration: "45 mins",
       icon: "book-open"
     },
     {
-      title: "Variables and Constants",
+      title: "Understanding Algorithms",
       duration: "1 hour",
-      icon: "superscript"
+      icon: "sitemap"
     },
     {
-      title: "Linear Equations",
+      title: "Data Structures Basics",
       duration: "1.5 hours",
-      icon: "equals"
+      icon: "database"
     },
     {
-      title: "Solving Word Problems",
+      title: "Computer Architecture",
       duration: "2 hours",
-      icon: "pencil-alt"
+      icon: "microchip"
     },
     {
-      title: "Graphing Linear Equations",
-      duration: "1.5 hours",
-      icon: "chart-line"
-    },
-    {
-      title: "Systems of Equations",
-      duration: "1.5 hours",
-      icon: "project-diagram"
-    },
-    {
-      title: "Quadratic Equations",
-      duration: "1.5 hours",
-      icon: "square"
-    },
-    {
-      title: "Practice Problems",
+      title: "Binary and Number Systems",
       duration: "1 hour",
-      icon: "tasks"
+      icon: "calculator"
     },
     {
-      title: "Algebra Quiz",
+      title: "Memory and Storage",
+      duration: "1 hour",
+      icon: "memory"
+    },
+    {
+      title: "Introduction to Programming",
+      duration: "1.5 hours",
+      icon: "code"
+    },
+    {
+      title: "Problem Solving Techniques",
+      duration: "1 hour",
+      icon: "puzzle-piece"
+    },
+    {
+      title: "Computer Science Quiz",
       duration: "15 mins",
       icon: "question-circle",
       isQuiz: true
@@ -266,6 +266,7 @@ export default function BasicAlgebra() {
         onClose={() => setQuizVisible(false)}
         themeColor={courseInfo.color}
       />
+
     </SafeAreaView>
   );
 }
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
-    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) + 20 : 20,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 20,
   },
   backButton: {
     backgroundColor: APP_COLORS.WHITE,
@@ -332,7 +333,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   activeTab: {
-    backgroundColor: APP_COLORS.CATEGORY_YELLOW,
+    backgroundColor: APP_COLORS.CATEGORY_BLUE,
   },
   tabText: {
     fontWeight: "bold",

@@ -2,37 +2,21 @@
 
 ![Prismathic](./assets/images/icon.png)
 
-> #### 🚨 **WARNING**  
-> #### **App Under Development**  
->  
-> #### **The code might be messy**, as this project was built while I was still learning React Native and Expo.
->
+> ⚠️ Project Status: Submitted, but... kinda unfinished
 
-## How To Start
+This project was created as part of an assignment — and yes, it’s already been submitted.  
+So technically... **mission accomplished**. 🎉
 
-1. Clone the repository
+But honestly, there are still a few things that could use improvement or polishing.  
+Whether or not that ever happens? Well... that depends on whether laziness loses the battle.
 
-2. Install dependencies
-   ```bash
-   npm install
-   ```
+---
 
-3. Start the development server
-   ```bash
-   npx expo start
-   ```
+## 📦 APK Release
 
-4. Launch the app on your preferred platform:
-   - Press `a` for Android
-   - Press `i` for iOS
-   - Press `w` for web
-   - Or just use [Expo Go](https://expo.dev/go)
+The app has been successfully built.  
+You can download the latest `.apk` file from the [Releases page](https://github.com/rizqishq/Prismathic/releases/).
 
-## 🛠️ Built With
+Feel free to try it out!
 
-- [React Native](https://reactnative.dev/) - Mobile app framework
-- [Expo](https://expo.dev/) - React Native toolchain
-- [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
-- Expo Router - For file-based navigation
-
-This project was developed as part of the PBP (Platform-Based Programming) course assignment at University.
+---

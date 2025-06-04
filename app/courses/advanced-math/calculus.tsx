@@ -262,8 +262,7 @@ export default function CalculusCourse() {
           {courseContent.map((item, index) => renderContentItem(item, index))}
         </View>
       </ScrollView>
-
-      <NeoBrutalismNavbar variant="course" />
+      
     </SafeAreaView>
   );
 }
